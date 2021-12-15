@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -6,12 +6,35 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-// import moment from "moment";
+import moment from "moment";
+import socket from "../../SocketConfig";
 import { Green, Blue, LightestGrey, HeadingText,Red } from "../../Styles/styles";
-import {data} from './data';
+// import {data} from './data';
 
 export default function TableComponent() {
-  console.log("rendering the component"); 
+
+  const [data, setData] = useState(null);
+  const [newData, setNewData] = useState(null);
+  useEffect(() => {
+    const data = {
+      clientId: "KJNDKJ234",
+    };
+
+    socket.emit("initial-connection-dashboard", data);
+    socket.on(
+      "running-shift-data",
+      (data) => {
+        console.log(data);
+        setData(data);
+      },
+      [socket]
+    );
+    socket.on("dashboard-update", (res) => {
+      console.log(res);
+      setData(res);
+    });
+  }, [newData]);
+
   return (
     <TableContainer
       component={Paper}
@@ -25,7 +48,7 @@ export default function TableComponent() {
                 background: "var(--black)",
                 color: "white",
               }}>
-              <TableCell>StationID</TableCell>
+              <TableCell>StationId</TableCell>
               <TableCell>WorkerID/Name</TableCell>
               <TableCell>Active&nbsp;Mins</TableCell>
               <TableCell>Away&nbsp;Mins</TableCell>
@@ -40,7 +63,7 @@ export default function TableComponent() {
               let background = idx < 3 ? "var(--light-green)" : "var(--grey-light)"
               return (
                 <TableRow
-                  key={row.stationID}
+                  key={row._id}
                   sx={{
                     "td, th": {
                       border: 0,
@@ -50,24 +73,21 @@ export default function TableComponent() {
                     marginBottom: "0.5rem",
                     marginTop: "0.5rem",
                   }}>
-                  <TableCell>{row.stationID}</TableCell>
-                  <TableCell>{row.workerName}</TableCell>
+                  <TableCell>{row.stationId}</TableCell>
+                  <TableCell>{row.name}</TableCell>
                   <TableCell>
                     <Green>
-                      {/* {moment.utc(row.activeTime * 1000).format("mm:ss")}m */}
-                      {row.activeTime}m
+                      {moment.utc(row.activeTime * 1000).format("mm:ss")}m
                     </Green>
                   </TableCell>
                   <TableCell>
                     <Red>
-                      {/* {moment.utc(row.awayTime * 1000).format("mm:ss")}m */}
-                      {row.awayTime}m
+                      {moment.utc(row.awayTime * 1000).format("mm:ss")}m
                     </Red>
                   </TableCell>
                   <TableCell>
                     <LightestGrey>
-                      {/* {moment.utc(row.idealTime * 1000).format("mm:ss")}m */}
-                      {row.idealTime}m
+                      {moment.utc(row.idealTime * 1000).format("mm:ss")}m
                     </LightestGrey>
                   </TableCell>
                   <TableCell>
