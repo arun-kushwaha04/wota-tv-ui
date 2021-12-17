@@ -11,6 +11,16 @@ import socket from "../../SocketConfig";
 import { Green, Blue, LightestGrey, HeadingText,Red } from "../../Styles/styles";
 // import {data} from './data';
 
+const formatTime = (time) => {
+  const minutes = parseInt(time/60)
+  time = time%60
+  const seconds = time
+  if(minutes <= 9 && seconds <=9)return `0${minutes}:0${seconds}`
+  else if(minutes <= 9 )return `0${minutes}:${seconds}`
+  else if(seconds <= 9) return `${minutes}:0${seconds}`
+  return `${minutes}:${seconds}`
+}
+
 export default function TableComponent() {
 
   const [data, setData] = useState(null);
@@ -77,24 +87,27 @@ export default function TableComponent() {
                   <TableCell>{row.name}</TableCell>
                   <TableCell>
                     <Green>
-                      {moment.utc(row.activeTime * 1000).format("mm:ss")}m
+                      {/* {moment.utc(row.activeTime * 1000).format("mm:ss")}m */}
+                      {formatTime(row.activeTime)}m
                     </Green>
                   </TableCell>
                   <TableCell>
                     <Red>
-                      {moment.utc(row.awayTime * 1000).format("mm:ss")}m
+                      {/* {moment.utc(row.awayTime * 1000).format("mm:ss")}m */}
+                      {formatTime(row.awayTime)}m
                     </Red>
                   </TableCell>
                   <TableCell>
                     <LightestGrey>
-                      {moment.utc(row.idealTime * 1000).format("mm:ss")}m
+                      {/* {moment.utc(row.idealTime * 1000).format("mm:ss")}m */}
+                      {row.idealTime ? `${formatTime(row.idealTime)}m `: ''}
                     </LightestGrey>
                   </TableCell>
                   <TableCell>
                     <LightestGrey>{row.kiloPicksProduced}</LightestGrey>
                   </TableCell>
                   <TableCell>
-                    <Blue>{row.totalPoints}</Blue>
+                    <Blue>{row.points?.toFixed(0)}</Blue>
                   </TableCell>
                 </TableRow>
               );
