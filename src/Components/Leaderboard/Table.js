@@ -11,9 +11,12 @@ import { Green, Blue, LightestGrey, HeadingText,Red } from "../../Styles/styles"
 // import {data} from './data';
 
 const formatTime = (time) => {
-  const minutes = parseInt(time/60)  
-  if(minutes <= 9 ) return `0${minutes}`
-  return `${minutes}`
+  const hours = parseInt(time/3600)
+  const minutes = parseInt((time%3600)/60)
+  if(hours <= 9 && minutes <= 9) return `0${hours}:0${minutes}`
+  if(hours <= 9) return `0${hours}:${minutes}`
+  if(minutes <= 9 ) return `${hours}:0${minutes}`
+  return `${hours}:${minutes}`
 }
 
 export default function TableComponent() {
@@ -29,13 +32,15 @@ export default function TableComponent() {
     socket.on(
       "running-shift-data",
       (data) => {
-        console.log(data);
+        data.runningShift.employees.sort((emp1,emp2) => emp1.points>emp2.points)
+        console.log(data)
         setData(data);
       },
       [socket]
     );
     socket.on("dashboard-update", (res) => {
-      console.log(res);
+      res.runningShift.employees.sort((emp1,emp2) => emp1.points>emp2.points)
+      console.log(res)
       setData(res);
     });
   }, [newData]);
@@ -55,9 +60,9 @@ export default function TableComponent() {
               }}>
               <TableCell>StationId</TableCell>
               <TableCell>WorkerID/Name</TableCell>
-              <TableCell>Active&nbsp;Mins</TableCell>
-              <TableCell>Away&nbsp;Mins</TableCell>
-              <TableCell>Idel&nbsp;Mins</TableCell>
+              <TableCell>Active&nbsp;Hrs</TableCell>
+              <TableCell>Away&nbsp;Hrs</TableCell>
+              <TableCell>Idel&nbsp;Hrs</TableCell>
               <TableCell>Total&nbsp;Points</TableCell>
             </TableRow>
           </TableHead>
@@ -82,19 +87,19 @@ export default function TableComponent() {
                   <TableCell>
                     <Green>
                       {/* {moment.utc(row.activeTime * 1000).format("mm:ss")}m */}
-                      {formatTime(row.activeTime)}m
+                      {formatTime(row.activeTime)}hrs
                     </Green>
                   </TableCell>
                   <TableCell>
                     <Red>
                       {/* {moment.utc(row.awayTime * 1000).format("mm:ss")}m */}
-                      {formatTime(row.awayTime)}m
+                      {formatTime(row.awayTime)}hrs
                     </Red>
                   </TableCell>
                   <TableCell>
                     <LightestGrey>
                       {/* {moment.utc(row.idealTime * 1000).format("mm:ss")}m */}
-                      {row.idealTime ? `${formatTime(row.idealTime)}m `: '--'}
+                      {row.idealTime ? `${formatTime(row.idealTime)}hrs `: '--'}
                     </LightestGrey>
                   </TableCell>                  
                   <TableCell>
