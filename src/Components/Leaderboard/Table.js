@@ -6,19 +6,14 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import moment from "moment";
 import socket from "../../SocketConfig";
 import { Green, Blue, LightestGrey, HeadingText,Red } from "../../Styles/styles";
 // import {data} from './data';
 
 const formatTime = (time) => {
-  const minutes = parseInt(time/60)
-  time = time%60
-  const seconds = time
-  if(minutes <= 9 && seconds <=9)return `0${minutes}:0${seconds}`
-  else if(minutes <= 9 )return `0${minutes}:${seconds}`
-  else if(seconds <= 9) return `${minutes}:0${seconds}`
-  return `${minutes}:${seconds}`
+  const minutes = parseInt(time/60)  
+  if(minutes <= 9 ) return `0${minutes}`
+  return `${minutes}`
 }
 
 export default function TableComponent() {
@@ -62,8 +57,7 @@ export default function TableComponent() {
               <TableCell>WorkerID/Name</TableCell>
               <TableCell>Active&nbsp;Mins</TableCell>
               <TableCell>Away&nbsp;Mins</TableCell>
-              <TableCell>Ideal&nbsp;Mins</TableCell>
-              <TableCell>Kilopicks&nbsp;Produced</TableCell>
+              <TableCell>Idel&nbsp;Mins</TableCell>
               <TableCell>Total&nbsp;Points</TableCell>
             </TableRow>
           </TableHead>
@@ -100,14 +94,11 @@ export default function TableComponent() {
                   <TableCell>
                     <LightestGrey>
                       {/* {moment.utc(row.idealTime * 1000).format("mm:ss")}m */}
-                      {row.idealTime ? `${formatTime(row.idealTime)}m `: ''}
+                      {row.idealTime ? `${formatTime(row.idealTime)}m `: '--'}
                     </LightestGrey>
-                  </TableCell>
+                  </TableCell>                  
                   <TableCell>
-                    <LightestGrey>{row.kiloPicksProduced}</LightestGrey>
-                  </TableCell>
-                  <TableCell>
-                    <Blue>{row.points?.toFixed(0)}</Blue>
+                    <Blue>{row.points ? row.points.toFixed(0):'--'}</Blue>
                   </TableCell>
                 </TableRow>
               );
