@@ -6,9 +6,9 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import moment from "moment";
 import socket from "../../SocketConfig";
-import { Green, Blue, LightestGrey, HeadingText } from "../../Styles/styles";
+import { Green, Blue, LightestGrey, HeadingText,Red } from "../../Styles/styles";
+// import {data} from './data';
 
 const formatTime = (time) => {
   const hours = parseInt(time/3600)
@@ -20,7 +20,7 @@ const formatTime = (time) => {
 }
 
 export default function TableComponent() {
-  console.log("rendering the component");
+
   const [data, setData] = useState(null);
   const [newData, setNewData] = useState(null);
   useEffect(() => {
@@ -28,68 +28,48 @@ export default function TableComponent() {
       clientId: "KJNDKJ234",
     };
 
+    socket.emit("initial-connection-dashboard", data);
     socket.on(
       "running-shift-data",
       (data) => {
-        console.log(data);
+        data.runningShift.employees.sort((emp1,emp2) => emp1.points>emp2.points)
+        console.log(data)
         setData(data);
       },
       [socket]
     );
-
-    // socket.emit('test-conn', "hello");
-    // socket.emit('report-live-status', data);
-    socket.emit("initial-connection-dashboard", data);
-
     socket.on("dashboard-update", (res) => {
-      console.log(res);
+      res.runningShift.employees.sort((emp1,emp2) => emp1.points>emp2.points)
+      console.log(res)
       setData(res);
     });
-
-    // socket.on("dashboard-update", (res) => {
-    //   console.log(res);
-    //   setNewData(res);
-    //   setData((prevState) => {
-    //     const temp = prevState;
-    //     if (temp && newData) {
-    //       temp.runningShift.employees.forEach((element) => {
-    //         if (element["_id"] === newData.employeeId) {
-    //           console.log("element", element);
-    //           if (newData.detected) element.activeTime += 10;
-    //           else element.awayTime += 10;
-    //         }
-    //       });
-    //     }
-    //     console.log(temp, prevState);
-    //     return temp;
-    //   });
-    // });
   }, [newData]);
 
   return (
     <TableContainer
       component={Paper}
-      sx={{ background: "transparent", boxShadow: "0" }}>
+      sx={{ background: "transparent", boxShadow: "0",padding:"0 8rem" }}>
       {data.runningShift.employees ? (
         <Table sx={{ width: "100%" }} aria-label="simple table" size="small">
           <TableHead>
             <TableRow
               sx={{
                 th: { textAlign: "center" },
-                background: "var(--blue-light)",
-                color: "var(--grey)",
+                background: "var(--black)",
+                color: "white",
               }}>
-              <TableCell>Zone</TableCell>
+              <TableCell>StationId</TableCell>
               <TableCell>WorkerID/Name</TableCell>
               <TableCell>Active&nbsp;Hrs</TableCell>
               <TableCell>Away&nbsp;Hrs</TableCell>
-              <TableCell>Idle&nbsp;Hrs</TableCell>
+              <TableCell>Idel&nbsp;Hrs</TableCell>
               <TableCell>Total&nbsp;Points</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.runningShift.employees.map((row) => {
+            {data.runningShift.employees.map((row,idx) => {
               // row.activeTime = moment({}).seconds(row.activeTime).format("mm:ss")
+              let background = idx < 3 ? "var(--light-green)" : "var(--grey-light)"
               return (
                 <TableRow
                   key={row._id}
@@ -98,11 +78,11 @@ export default function TableComponent() {
                       border: 0,
                     },
                     td: { textAlign: "center" },
-                    background: "var(--grey-light)",
+                    background: background,
                     marginBottom: "0.5rem",
                     marginTop: "0.5rem",
                   }}>
-                  <TableCell>{row.zoneName}</TableCell>
+                  <TableCell>{row.stationId}</TableCell>
                   <TableCell>{row.name}</TableCell>
                   <TableCell>
                     <Green>
@@ -111,10 +91,10 @@ export default function TableComponent() {
                     </Green>
                   </TableCell>
                   <TableCell>
-                    <LightestGrey>
+                    <Red>
                       {/* {moment.utc(row.awayTime * 1000).format("mm:ss")}m */}
                       {formatTime(row.awayTime)}hrs
-                    </LightestGrey>
+                    </Red>
                   </TableCell>
                   <TableCell>
                     <LightestGrey>
