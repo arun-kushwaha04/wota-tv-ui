@@ -49,7 +49,7 @@ export default function TableComponent() {
     <TableContainer
       component={Paper}
       sx={{ background: "transparent", boxShadow: "0",padding:"0 8rem" }}>
-      {data ? (
+      {data.runningShift.employees ? (
         <Table sx={{ width: "100%" }} aria-label="simple table" size="small">
           <TableHead>
             <TableRow
