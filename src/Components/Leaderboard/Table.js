@@ -19,6 +19,10 @@ const formatTime = (time) => {
   return `${hours}:${minutes}`
 }
 
+const formatArrayToString = (array) => {
+  return array.join(',')
+}
+
 export default function TableComponent() {
 
   const [data, setData] = useState(null);
@@ -62,7 +66,9 @@ export default function TableComponent() {
               <TableCell>WorkerID/Name</TableCell>
               <TableCell>Active&nbsp;Hrs</TableCell>
               <TableCell>Away&nbsp;Hrs</TableCell>
+              <TableCell>Machine&nbsp;Run&nbsp;Hrs</TableCell>
               <TableCell>Idel&nbsp;Hrs</TableCell>
+              <TableCell>Machines&nbsp;Alloted</TableCell>
               <TableCell>Total&nbsp;Points</TableCell>
             </TableRow>
           </TableHead>
@@ -99,9 +105,18 @@ export default function TableComponent() {
                   <TableCell>
                     <LightestGrey>
                       {/* {moment.utc(row.idealTime * 1000).format("mm:ss")}m */}
+                      {row.idealTime ? `${formatTime(row.machineRunTime)}hrs `: '--'}
+                    </LightestGrey>
+                  </TableCell>                  
+                  <TableCell>
+                    <LightestGrey>
+                      {/* {moment.utc(row.idealTime * 1000).format("mm:ss")}m */}
                       {row.idealTime ? `${formatTime(row.idealTime)}hrs `: '--'}
                     </LightestGrey>
                   </TableCell>                  
+                  <TableCell>
+                    <LightestGrey>{row.machineAlloted ? formatArrayToString(row.machineAlloted):'--'}</LightestGrey>
+                  </TableCell>
                   <TableCell>
                     <Blue>{row.points ? row.points.toFixed(0):'--'}</Blue>
                   </TableCell>
