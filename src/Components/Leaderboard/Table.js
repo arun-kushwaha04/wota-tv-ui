@@ -42,10 +42,17 @@ export default function TableComponent() {
       },
       [socket]
     );
+
     socket.on("dashboard-update", (res) => {
-      res.runningShift.employees.sort((emp1,emp2) => emp1.points>emp2.points)
-      console.log(res)
-      setData(res);
+      if(res.runningShift && res.runningShift.employees && res.runningShift.employees.length > 0){
+        res.runningShift.employees.sort((emp1,emp2) => {
+          if(!emp2.points) emp2.points = 0;
+          if(!emp1.points) emp1.points = 0;
+          return emp2.points-emp1.points;
+        })  
+        console.log(res)
+        setData(res);
+      }       
     });
   }, [newData]);
 
